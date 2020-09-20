@@ -5,15 +5,27 @@ class YoutubeDl < Formula
   sha256 "0657c19661bbec99117a2eb2b5a2d26d3f0b0a58703035f1ebf76bb5f2858ea3"
   license "Unlicense"
 
-  head do
-    url "https://github.com/ytdl-org/youtube-dl.git"
-    depends_on "pandoc" => :build
+  bottle do
+    cellar :any_skip_relocation
+    sha256 "1cedb2cdd25ae6096567bc8abb6257460f3a035979ace09f97826ff9e2d624da" => :mojave
   end
 
-  bottle :unneeded
+  head do
+    url "https://github.com/ytdl-org/youtube-dl.git"
+  end
+
+  depends_on "pandoc" => :build
+  depends_on "python@3.8" if MacOS.version <= :mojave
 
   def install
-    system "make", "PREFIX=#{prefix}" if build.head?
+    # Explicitly use `python3` instead of the unversioned `python`, which may
+    # point to a Python2 installation. Use -B flag to rebuild included binary.
+    args = %W[
+      -B
+      PYTHON=/usr/bin/env\ python3
+      PREFIX=#{prefix}
+    ]
+    system "make", *args
     bin.install "youtube-dl"
     man1.install "youtube-dl.1"
     bash_completion.install "youtube-dl.bash-completion"
