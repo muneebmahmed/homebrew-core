@@ -12,8 +12,11 @@ class YoutubeDl < Formula
 
   bottle :unneeded
 
+  depends_on "python@3.8" if MacOS.version <= :mojave
+
   def install
-    system "make", "PREFIX=#{prefix}" if build.head?
+    system "make", "PYTHON=/usr/bin/env python3", "PREFIX=#{prefix}" if build.head?
+    inreplace "youtube-dl", "#!/usr/bin/env python", "#!/usr/bin/env python3" unless build.head?
     bin.install "youtube-dl"
     man1.install "youtube-dl.1"
     bash_completion.install "youtube-dl.bash-completion"
