@@ -15,6 +15,8 @@ class YoutubeDl < Formula
   depends_on "python@3.8" if MacOS.version <= :mojave
 
   def install
+    # Use `python3` instead of the unversioned `python`, which may point to a
+    # Python 2 installation.
     system "make", "PYTHON=/usr/bin/env python3", "PREFIX=#{prefix}" if build.head?
     inreplace "youtube-dl", %r{^#!/usr/bin/env python$}, "#!/usr/bin/env python3" unless build.head?
     bin.install "youtube-dl"
