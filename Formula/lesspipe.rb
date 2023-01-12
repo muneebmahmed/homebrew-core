@@ -4,6 +4,7 @@ class Lesspipe < Formula
   url "https://github.com/wofr06/lesspipe/archive/v2.07.tar.gz"
   sha256 "b6a591c053057c3968d0d1fbd32e4a0a8026cd5c27e861023e3542772eda1cba"
   license "GPL-2.0-only"
+  revision 1
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "eab7ed95d12d5b9ccf4f2600e41ec76f771cf6efbce668e1be80497366029a1f"
@@ -16,7 +17,12 @@ class Lesspipe < Formula
   end
 
   def install
-    system "./configure", "--prefix=#{prefix}"
+    args = %W[
+      --prefix=#{prefix}
+    ]
+    # Newer shell features not present in macOS bash
+    args << "--shell=/bin/zsh" if OS.mac?
+    system "./configure", *args
     man1.mkpath
     system "make", "install"
   end
