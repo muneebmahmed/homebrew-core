@@ -16,13 +16,14 @@ class Lesspipe < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "5569b10632037ead5f2f19b5c8b6328bbbac744dfe523da1cadfbd760ebe22ab"
   end
 
+  # patch for runtime error, remove in next release
+  patch do
+    url "https://github.com/wofr06/lesspipe/commit/ff6ecf9671a417ee85218a99c47a93ce2c0388be.patch?full_index=1"
+    sha256 "4204136f2e1ad0fa8a9b1f42b192ce422799860d073663130e77eefa107260ca"
+  end
+
   def install
-    args = %W[
-      --prefix=#{prefix}
-    ]
-    # Newer shell features not present in macOS bash
-    args << "--shell=/bin/zsh" if OS.mac?
-    system "./configure", *args
+    system "./configure", "--prefix=#{prefix}"
     man1.mkpath
     system "make", "install"
   end
