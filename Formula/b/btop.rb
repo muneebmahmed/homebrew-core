@@ -1,8 +1,8 @@
 class Btop < Formula
   desc "Resource monitor. C++ version and continuation of bashtop and bpytop"
   homepage "https://github.com/aristocratos/btop"
-  url "https://github.com/aristocratos/btop/archive/refs/tags/v1.2.13.tar.gz"
-  sha256 "668dc4782432564c35ad0d32748f972248cc5c5448c9009faeb3445282920e02"
+  url "https://github.com/aristocratos/btop/archive/refs/tags/v1.3.2.tar.gz"
+  sha256 "331d18488b1dc7f06cfa12cff909230816a24c57790ba3e8224b117e3f0ae03e"
   license "Apache-2.0"
   head "https://github.com/aristocratos/btop.git", branch: "main"
 
@@ -19,10 +19,14 @@ class Btop < Formula
 
   on_macos do
     depends_on "coreutils" => :build
-    depends_on "gcc"
+    depends_on "llvm" => :build if DevelopmentTools.clang_build_version <= 1403
   end
 
-  fails_with :clang # -ftree-loop-vectorize -flto=12 -s
+  # -ftree-loop-vectorize -flto=12 -s
+  fails_with :clang do
+    build 1403
+    cause "Requires C++20 support"
+  end
 
   fails_with :gcc do
     version "9"
